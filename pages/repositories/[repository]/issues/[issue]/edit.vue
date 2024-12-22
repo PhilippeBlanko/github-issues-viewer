@@ -1,5 +1,5 @@
 <template>
-  <NuxtLink v-bind:to="'/list'">Liste des issues GitHub</NuxtLink>
+  <NuxtLink v-bind:to="`/repositories/${repositorySlug}/issues`">Liste des issues GitHub ({{ repositorySlug }})</NuxtLink>
   <div v-if="fetchIssueState !== 'idle'">
     <p v-if="fetchIssueState === 'pending'">Chargement...</p>
     <div v-if="fetchIssueState === 'succeeded'">
@@ -21,21 +21,22 @@
 <script setup>
 import { ref, watch, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { useGitHubIssue } from "~/composables/useGithubIssue";
+import { useGithubIssue } from "~/composables/useGithubIssue";
 import { useUpdateGithubIssue } from "~/composables/useUpdateGithubIssue.js";
 import {useCloseGithubIssue} from "~/composables/useCloseGithubIssue.js";
 
 const route = useRoute();
 const router = useRouter();
-const issueNumber = route.params.number;
-const { issue, fetchState: fetchIssueState, error: issueError, fetchIssue } = useGitHubIssue();
+const repositorySlug = route.params.repository;
+const issueSlug = route.params.issue;
+const { issue, fetchState: fetchIssueState, error: issueError, fetchIssue } = useGithubIssue();
 const { updatedIssue, fetchState: fetchUpdateState, error: updateError, fetchUpdateIssue } = useUpdateGithubIssue();
 const { closedIssue, fetchState: fetchCloseState, error: closeError, fetchCloseIssue } = useCloseGithubIssue();
 const title = ref('');
 const body = ref('');
 
 onMounted(() => {
-  fetchIssue(issueNumber);
+  fetchIssue(repositorySlug, issueSlug);
 })
 
 watch(fetchIssueState, (newState) => {
@@ -51,18 +52,18 @@ const updateIssue = async () => {
     ...(body.value && { body: body.value }),
   };
 
-  await fetchUpdateIssue(issueNumber, issueData);
+  await fetchUpdateIssue(repositorySlug, issueSlug, issueData);
 
   if (fetchUpdateState.value === 'succeeded') {
-    router.push(`/detail/${issueNumber}`);
+    router.push(`/repositories/${repositorySlug}/issues/${issueSlug}`);
   }
 }
 
 const closeIssue = async () => {
-  await fetchCloseIssue(issueNumber);
+  await fetchCloseIssue(repositorySlug, issueSlug);
 
   if (fetchCloseState.value === 'succeeded') {
-    router.push(`/list`);
+    router.push(`/repositories/${repositorySlug}/issues`);
   }
 }
 </script>

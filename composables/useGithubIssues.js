@@ -1,14 +1,14 @@
 import { ref } from 'vue';
 
-export const useGitHubIssues = () => {
+export const useGithubIssues = () => {
   const issues = ref([]);
   const fetchState = ref('idle');
   const error = ref(null);
 
-  const fetchIssues = async () => {
+  const fetchIssues = async (repositorySlug) => {
     fetchState.value = 'pending';
     try {
-      const response = await fetch('https://api.github.com/repos/philippeblanko/github-issues-viewer/issues', {
+      const response = await fetch(`https://api.github.com/repos/philippeblanko/${repositorySlug}/issues`, {
         headers: {
           'Accept': 'application/vnd.github.raw+json'
         },

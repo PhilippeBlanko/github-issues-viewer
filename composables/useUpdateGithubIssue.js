@@ -7,10 +7,10 @@ export const useUpdateGithubIssue = () => {
   const error = ref(null);
   const config = useRuntimeConfig();
 
-  const fetchUpdateIssue = async (issueNumber, issueData) => {
+  const fetchUpdateIssue = async (repositorySlug, issueSlug, issueData) => {
     fetchState.value = 'pending';
     try {
-      const response = await fetch(`https://api.github.com/repos/philippeblanko/github-issues-viewer/issues/${issueNumber}`, {
+      const response = await fetch(`https://api.github.com/repos/philippeblanko/${repositorySlug}/issues/${issueSlug}`, {
         method: 'PATCH',
         headers: {
           'Authorization': `token ${config.public.githubToken}`,

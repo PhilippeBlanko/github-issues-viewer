@@ -1,5 +1,5 @@
 <template>
-  <NuxtLink v-bind:to="'/list'">Liste des issues GitHub</NuxtLink>
+  <NuxtLink v-bind:to="`/repositories/${repositorySlug}/issues`">Liste des issues GitHub ({{ repositorySlug }})</NuxtLink>
   <h1>Créer une issue GitHub</h1>
   <form @submit.prevent="createIssue">
     <label>Nom de l'issue <input v-model="title" /></label><br>
@@ -11,10 +11,12 @@
 </template>
 
 <script setup>
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useCreateGithubIssue } from "~/composables/useCreateGithubIssue.js";
 
+const route = useRoute();
 const router = useRouter();
+const repositorySlug = route.params.repository;
 const { createdIssue, fetchState, error, fetchCreateIssue } = useCreateGithubIssue();
 const title = ref('');
 const body = ref('');
@@ -25,10 +27,10 @@ const createIssue = async () => {
     ...(body.value && { body: body.value }),
   };
 
-  await fetchCreateIssue(issueData);
+  await fetchCreateIssue(repositorySlug, issueData);
 
   if (fetchState.value === 'succeeded') {
-    router.push('/list');
+    router.push(`/repositories/${repositorySlug}/issues`);
   }
 }
 </script>

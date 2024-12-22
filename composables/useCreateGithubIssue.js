@@ -7,10 +7,10 @@ export const useCreateGithubIssue = () => {
   const error = ref(null);
   const config = useRuntimeConfig();
 
-  const fetchCreateIssue = async (issueData) => {
+  const fetchCreateIssue = async (repositorySlug, issueData) => {
     fetchState.value = 'pending';
     try {
-      const response = await fetch('https://api.github.com/repos/philippeblanko/github-issues-viewer/issues', {
+      const response = await fetch(`https://api.github.com/repos/philippeblanko/${repositorySlug}/issues`, {
         method: 'POST',
         headers: {
           'Authorization': `token ${config.public.githubToken}`,

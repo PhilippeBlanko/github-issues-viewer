@@ -7,10 +7,10 @@ export const useCloseGithubIssue = () => {
   const error = ref(null);
   const config = useRuntimeConfig();
 
-  const fetchCloseIssue = async (issueNumber) => {
+  const fetchCloseIssue = async (repositorySlug, issueSlug) => {
     fetchState.value = 'pending';
     try {
-      const response = await fetch(`https://api.github.com/repos/philippeblanko/github-issues-viewer/issues/${issueNumber}`, {
+      const response = await fetch(`https://api.github.com/repos/philippeblanko/${repositorySlug}/issues/${issueSlug}`, {
         method: 'PATCH',
         headers: {
           'Authorization': `token ${config.public.githubToken}`,
