@@ -5,6 +5,8 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       githubToken: process.env.GITHUB_TOKEN,
+      githubClientId: process.env.GITHUB_CLIENT_ID,
+      githubClientSecret: process.env.GITHUB_CLIENT_SECRET,
     },
   },
 })
