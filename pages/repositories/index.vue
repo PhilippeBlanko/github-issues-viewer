@@ -1,5 +1,5 @@
 <template>
-  <h1>Liste des répertoires GitHub</h1>
+  <h1>{{ $t('listeDesRepertoireGithub') }}</h1>
   <div v-if="fetchState !== 'idle'">
     <p v-if="fetchState === 'pending'">Chargement...</p>
     <ul v-if="fetchState === 'succeeded' && repositories.length">

@@ -9,4 +9,15 @@ export default defineNuxtConfig({
       githubClientSecret: process.env.GITHUB_CLIENT_SECRET,
     },
   },
+  modules: [
+    '@nuxtjs/i18n',
+  ],
+  i18n: {
+    locales: [
+      { code: 'en', name: 'English', file: 'en.js' },
+      { code: 'fr', name: 'Français', file: 'fr.js' }
+    ],
+    defaultLocale: 'fr',
+    strategy: 'prefix_except_default',
+  },
 })

@@ -23,7 +23,8 @@ import { ref, watch, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useGithubIssue } from "~/composables/useGithubIssue";
 import { useUpdateGithubIssue } from "~/composables/useUpdateGithubIssue.js";
-import {useCloseGithubIssue} from "~/composables/useCloseGithubIssue.js";
+import { useCloseGithubIssue } from "~/composables/useCloseGithubIssue.js";
+import { useSharedIssue } from "~/composables/useSharedIssue.js";
 
 const route = useRoute();
 const router = useRouter();
@@ -32,8 +33,10 @@ const issueSlug = route.params.issue;
 const { issue, fetchState: fetchIssueState, error: issueError, fetchIssue } = useGithubIssue();
 const { updatedIssue, fetchState: fetchUpdateState, error: updateError, fetchUpdateIssue } = useUpdateGithubIssue();
 const { closedIssue, fetchState: fetchCloseState, error: closeError, fetchCloseIssue } = useCloseGithubIssue();
+const { setSharedIssue } = useSharedIssue();
 const title = ref('');
 const body = ref('');
+const originalIssue = ref(null);
 
 onMounted(() => {
   fetchIssue(repositorySlug, issueSlug);
@@ -51,6 +54,13 @@ const updateIssue = async () => {
     title: title.value,
     ...(body.value && { body: body.value }),
   };
+
+  // Mise à jour optimiste
+  setSharedIssue({
+    ...issue.value,
+    title: title.value,
+    ...(body.value && { body: body.value }),
+  })
 
   await fetchUpdateIssue(repositorySlug, issueSlug, issueData);
 

@@ -13,11 +13,13 @@
 <script setup>
 import { useRoute, useRouter } from "vue-router";
 import { useCreateGithubIssue } from "~/composables/useCreateGithubIssue.js";
+import { useSharedIssues } from "~/composables/useSharedIssues.js";
 
 const route = useRoute();
 const router = useRouter();
 const repositorySlug = route.params.repository;
 const { createdIssue, fetchState, error, fetchCreateIssue } = useCreateGithubIssue();
+const { addSharedIssue } = useSharedIssues();
 const title = ref('');
 const body = ref('');
 
@@ -26,6 +28,9 @@ const createIssue = async () => {
     title: title.value,
     ...(body.value && { body: body.value }),
   };
+
+  // Mise à jour optimiste
+  addSharedIssue(issueData, "start");
 
   await fetchCreateIssue(repositorySlug, issueData);
 
