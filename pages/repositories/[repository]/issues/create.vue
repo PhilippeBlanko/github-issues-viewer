@@ -13,13 +13,13 @@
 <script setup>
 import { useRoute, useRouter } from "vue-router";
 import { useCreateGithubIssue } from "~/composables/useCreateGithubIssue.js";
-import { useSharedIssues } from "~/composables/useSharedIssues.js";
+import { useSharedIssuesStore } from "~/stores/sharedIssues.js";
 
 const route = useRoute();
 const router = useRouter();
 const repositorySlug = route.params.repository;
 const { createdIssue, fetchState, error, fetchCreateIssue } = useCreateGithubIssue();
-const { addSharedIssue } = useSharedIssues();
+const sharedIssuesStore = useSharedIssuesStore();
 const title = ref('');
 const body = ref('');
 
@@ -29,8 +29,8 @@ const createIssue = async () => {
     ...(body.value && { body: body.value }),
   };
 
-  // Mise à jour optimiste
-  addSharedIssue(issueData, "start");
+  // Mise à jour optimiste avec Pinia
+  sharedIssuesStore.addSharedIssue(issueData, "start");
 
   await fetchCreateIssue(repositorySlug, issueData);
 

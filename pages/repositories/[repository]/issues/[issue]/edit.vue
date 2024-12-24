@@ -24,7 +24,8 @@ import { useRoute, useRouter } from "vue-router";
 import { useGithubIssue } from "~/composables/useGithubIssue";
 import { useUpdateGithubIssue } from "~/composables/useUpdateGithubIssue.js";
 import { useCloseGithubIssue } from "~/composables/useCloseGithubIssue.js";
-import { useSharedIssue } from "~/composables/useSharedIssue.js";
+import { useSharedIssueStore } from "~/stores/sharedIssue.js";
+import { useSharedIssuesStore } from "~/stores/sharedIssues.js";
 
 const route = useRoute();
 const router = useRouter();
@@ -33,10 +34,10 @@ const issueSlug = route.params.issue;
 const { issue, fetchState: fetchIssueState, error: issueError, fetchIssue } = useGithubIssue();
 const { updatedIssue, fetchState: fetchUpdateState, error: updateError, fetchUpdateIssue } = useUpdateGithubIssue();
 const { closedIssue, fetchState: fetchCloseState, error: closeError, fetchCloseIssue } = useCloseGithubIssue();
-const { setSharedIssue } = useSharedIssue();
+const sharedIssueStore = useSharedIssueStore();
+const sharedIssuesStore = useSharedIssuesStore();
 const title = ref('');
 const body = ref('');
-const originalIssue = ref(null);
 
 onMounted(() => {
   fetchIssue(repositorySlug, issueSlug);
@@ -55,8 +56,8 @@ const updateIssue = async () => {
     ...(body.value && { body: body.value }),
   };
 
-  // Mise à jour optimiste
-  setSharedIssue({
+  // Mise à jour optimiste avec Pinia
+  sharedIssueStore.setSharedIssue({
     ...issue.value,
     title: title.value,
     ...(body.value && { body: body.value }),
@@ -70,6 +71,8 @@ const updateIssue = async () => {
 }
 
 const closeIssue = async () => {
+  sharedIssuesStore.removeSharedIssue(issueSlug);
+
   await fetchCloseIssue(repositorySlug, issueSlug);
 
   if (fetchCloseState.value === 'succeeded') {

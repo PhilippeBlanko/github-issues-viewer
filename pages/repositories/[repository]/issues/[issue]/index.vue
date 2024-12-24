@@ -16,20 +16,24 @@
 import { onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { useGithubIssue } from "~/composables/useGithubIssue";
-import { useSharedIssue } from "~/composables/useSharedIssue.js";
+import { useSharedIssueStore } from "~/stores/sharedIssue.js";
 import { formatDate } from '~/utils/date';
+
 
 const route = useRoute();
 const repositorySlug = route.params.repository;
 const issueSlug = route.params.issue;
 const { issue, fetchState, error, fetchIssue } = useGithubIssue();
-const { sharedIssue } = useSharedIssue();
+const sharedIssueStore = useSharedIssueStore();
 
 onMounted(() => {
-  // Utilisé données partagées optimistes, sinon, faire la requête de l'API
-  if (sharedIssue.value && sharedIssue.value.number === parseInt(issueSlug, 10)) {
-    issue.value = sharedIssue.value;
+  sharedIssueStore.loadSharedIssue();
+
+  // Utilisé données partagées optimistes avec Pinia, sinon, faire la requête de l'API
+  if (sharedIssueStore.sharedIssue && sharedIssueStore.sharedIssue.number === parseInt(issueSlug, 10)) {
+    issue.value = sharedIssueStore.sharedIssue;
     fetchState.value = "succeeded";
+    console.log(sharedIssueStore.sharedIssue)
   } else {
     fetchIssue(repositorySlug, issueSlug);
   }

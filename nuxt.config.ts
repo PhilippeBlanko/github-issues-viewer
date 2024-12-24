@@ -11,6 +11,13 @@ export default defineNuxtConfig({
   },
   modules: [
     '@nuxtjs/i18n',
+    '@pinia/nuxt',
+    '@nuxtjs/tailwindcss',
+  ],
+  plugins: [
+    '~/plugins/setGradientBackground.js',
+    '~/plugins/directives.js',
+    '~/plugins/merge-class.js',
   ],
   i18n: {
     locales: [

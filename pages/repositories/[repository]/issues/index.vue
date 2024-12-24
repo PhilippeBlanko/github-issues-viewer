@@ -18,20 +18,22 @@
 import {onMounted, watch} from "vue";
 import { useRoute } from "vue-router";
 import { useGithubIssues } from "~/composables/useGithubIssues";
-import { useSharedIssues } from "~/composables/useSharedIssues.js";
+import { useSharedIssuesStore } from "~/stores/sharedIssues.js";
 
 const route = useRoute();
 const repositorySlug = route.params.repository;
 const { issues, fetchState, error, fetchIssues } = useGithubIssues();
-const { sharedIssues, addSharedIssue, removeAllSharedIssues } = useSharedIssues();
+const sharedIssuesStore = useSharedIssuesStore();
 
 // État pour éviter la double mise à jour des issues
 const isInitialFetchDone = ref(false);
 
 onMounted(() => {
-  // Utilisé données partagées optimistes, sinon, faire la requête de l'API
-  if (sharedIssues.value && sharedIssues.value.length > 0) {
-    issues.value = sharedIssues.value;
+  sharedIssuesStore.loadSharedIssues();
+
+  // Utilisé données partagées optimistes avec Pinia, sinon, faire la requête de l'API
+  if (sharedIssuesStore.sharedIssues && sharedIssuesStore.sharedIssues.length > 0) {
+    issues.value = sharedIssuesStore.sharedIssues;
     fetchState.value = "succeeded";
     isInitialFetchDone.value = true;
   } else {
@@ -42,8 +44,8 @@ onMounted(() => {
 
 watch(fetchState, (newState) => {
   if (newState === 'succeeded' && !isInitialFetchDone.value) {
-    removeAllSharedIssues();
-    issues.value.forEach(issue => addSharedIssue(issue));
+    sharedIssuesStore.removeAllSharedIssues();
+    issues.value.forEach(issue => sharedIssuesStore.addSharedIssue(issue));
     isInitialFetchDone.value = true;
   }
 });

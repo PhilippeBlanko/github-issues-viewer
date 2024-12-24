@@ -2,7 +2,7 @@ import { ref, onMounted } from "vue";
 
 const sharedIssue = ref(null);
 
-export const useSharedIssue = () => {
+export const withoutPinia_useSharedIssue = () => {
   // Lors de la première exécution, récupère la donnée depuis localStorage
   onMounted(() => {
     const storedIssue = localStorage.getItem("sharedIssue");
