@@ -1,24 +1,28 @@
 import { useCookie } from '#app';
-import axios from "axios";
 
-export const useGithubUser = () => {
+export const withoutAxios_useGithubUser = () => {
   const userInfo = useCookie('user_info');
   const isAuthenticated = useCookie('is_authenticated');
 
   const setUser = async (token) => {
     try {
-      const response = await axios.get('https://api.github.com/user', {
+      const response = await fetch('https://api.github.com/user', {
+        method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
           'Accept': 'application/vnd.github+json',
         },
       });
 
-      userInfo.value = response.data;
-      console.log(userInfo)
+      if (!response.ok) {
+        throw new Error(`Erreur : ${response.statusText}`);
+      }
+
+      const userData = await response.json();
+      userInfo.value = userData;
       isAuthenticated.value = true;
     } catch (err) {
-      console.error('Erreur:', err.response?.data?.message || err.message);
+      console.error('Erreur:', err);
     }
   };
 

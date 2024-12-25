@@ -18,6 +18,7 @@ export default defineNuxtConfig({
     '~/plugins/setGradientBackground.js',
     '~/plugins/directives.js',
     '~/plugins/merge-class.js',
+    '~/plugins/Vue3Lottie.client.js',
   ],
   i18n: {
     locales: [
