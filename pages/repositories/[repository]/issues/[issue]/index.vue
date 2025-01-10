@@ -33,7 +33,6 @@ onMounted(() => {
   if (sharedIssueStore.sharedIssue && sharedIssueStore.sharedIssue.number === parseInt(issueSlug, 10)) {
     issue.value = sharedIssueStore.sharedIssue;
     fetchState.value = "succeeded";
-    console.log(sharedIssueStore.sharedIssue)
   } else {
     fetchIssue(repositorySlug, issueSlug);
   }

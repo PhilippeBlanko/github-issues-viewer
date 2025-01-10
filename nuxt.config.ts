@@ -19,6 +19,7 @@ export default defineNuxtConfig({
     '~/plugins/directives.js',
     '~/plugins/merge-class.js',
     '~/plugins/Vue3Lottie.client.js',
+    '~/plugins/websocket-server.js',
   ],
   i18n: {
     locales: [
